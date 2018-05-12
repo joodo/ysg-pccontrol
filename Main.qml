@@ -39,8 +39,7 @@ Window {
             }
         }
 
-        interval: 1000; running: mediaplayer.playbackState===MediaPlayer.PlayingState
-        repeat: true; triggeredOnStart: true
+        interval: 1000; repeat: true; triggeredOnStart: true
     }
 
     Text {
@@ -62,28 +61,33 @@ Window {
         source: mediaplayer
         MediaPlayer {
             id: mediaplayer
+            property int videoType: 0
             function playVideo(name) {
                 switch (name) {
                 case "a":
                 case "b":
                 case "c":
-                    mediaplayer.source = Session.videoPath[name.charCodeAt(0)-"a".charCodeAt(0)]
-                    mediaplayer.play()
+                    videoType = name.charCodeAt(0)-"a".charCodeAt(0)
+                    source = Session.videoPath[videoType]
+                    play()
                     break;
                 default: ;
-                }
-                if (name === "c") {
-                    loops = MediaPlayer.Infinite
-                } else {
-                    loops = 1
                 }
             }
             onPlaybackStateChanged: {
                 if (playbackState === MediaPlayer.PlayingState) {
-                    timerSandBoxAction.initActions()
+                    if (videoType === 2) {
+                        // 执行ppt播放
+                    } else {
+                        timerSandBoxAction.initActions()
+                        timerSandBoxAction.running = true
+                    }
+                } else {
+                    timerSandBoxAction.running = false
                 }
             }
             volume: 0.5
+            loops: videoType===2? MediaPlayer.Infinite : 1
         }
     }
 
