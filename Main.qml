@@ -31,6 +31,18 @@ Window {
         source: mediaplayer
         MediaPlayer {
             id: mediaplayer
+            function playVideo(name) {
+                switch (name) {
+                case "a":
+                    mediaplayer.source = Session.videoPath[0]
+                case "b":
+                    mediaplayer.source = Session.videoPath[1]
+                case "c":
+                    mediaplayer.source = Session.videoPath[2]
+                    mediaplayer.play()
+                default: ;
+                }
+            }
         }
     }
 
@@ -40,20 +52,10 @@ Window {
         onClicked: { viewSettings.visible = true }
         focus: true
         Keys.onPressed: {
-            if (event.key === Qt.Key_A) {
-                mediaplayer.source = Session.videoPath[0]
-                mediaplayer.play()
-            }
-            if (event.key === Qt.Key_B) {
-                mediaplayer.source = Session.videoPath[1]
-                mediaplayer.play()
-            }
-            if (event.key === Qt.Key_C) {
-                mediaplayer.source = Session.videoPath[2]
-                mediaplayer.play()
-            }
             if (event.key === Qt.Key_Space) {
                 mediaplayer.stop()
+            } else {
+                mediaplayer.playVideo(event.text)
             }
         }
     }
@@ -65,4 +67,35 @@ Window {
         onVisibleChanged: if (!visible) mouseArea.focus = true
     }
 
+    Connections {
+        target: Backend
+        onCommandReceived: {
+            switch(command) {
+            case "a":
+            case "b":
+            case "c":
+                mediaplayer.playVideo(command)
+                break
+            case "volumeup":
+                if (mediaplayer.volume < 1.0) mediaplayer.volume += 0.2
+                break
+            case "volumedown":
+                if (mediaplayer.volume > 0.0) mediaplayer.volume -= 0.2
+                break
+            case "mute":
+                mediaplayer.muted = !mediaplayer.muted
+                break
+            case "play":
+                mediaplayer.play()
+                break
+            case "stop":
+                mediaplayer.stop()
+                break
+            case "pause":
+                mediaplayer.pause()
+                break;
+            default: ;
+            }
+        }
+    }
 }
