@@ -1,0 +1,10 @@
+<RCC>
+    <qresource prefix="/">
+        <file>Main.qml</file>
+        <file>ViewSettings.qml</file>
+        <file>ViewVideoPath.qml</file>
+        <file>ViewOtherSettings.qml</file>
+        <file>Session.qml</file>
+        <file>ViewSandBoxLight.qml</file>
+    </qresource>
+</RCC>
