@@ -65,12 +65,11 @@ Window {
             function playVideo(name) {
                 switch (name) {
                 case "a":
-                    mediaplayer.source = Session.videoPath[0]
                 case "b":
-                    mediaplayer.source = Session.videoPath[1]
                 case "c":
-                    mediaplayer.source = Session.videoPath[2]
+                    mediaplayer.source = Session.videoPath[name.charCodeAt(0)-"a".charCodeAt(0)]
                     mediaplayer.play()
+                    break;
                 default: ;
                 }
             }
