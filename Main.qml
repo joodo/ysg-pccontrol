@@ -72,6 +72,11 @@ Window {
                     break;
                 default: ;
                 }
+                if (name === "c") {
+                    loops = MediaPlayer.Infinite
+                } else {
+                    loops = 1
+                }
             }
             onPlaybackStateChanged: {
                 if (playbackState === MediaPlayer.PlayingState) {
@@ -90,6 +95,8 @@ Window {
         Keys.onPressed: {
             if (event.key === Qt.Key_Space) {
                 mediaplayer.stop()
+            } else if (event.key === Qt.Key_Escape) {
+                Qt.quit()
             } else {
                 mediaplayer.playVideo(event.text)
             }
