@@ -19,16 +19,24 @@ Rectangle {
         }
     }
 
-    Button {
-        id: buttonSaveAndQuit
-
-        onClicked: {
-            Session.save()
-            viewSettings.visible = false
-        }
-
+    Row {
         anchors { right: parent.right; top: parent.top }
-        text: "确定"
+        spacing: 2
+
+        Button {
+            text: "退出"
+            onClicked: Qt.quit()
+        }
+        Button {
+            id: buttonSaveAndQuit
+
+            onClicked: {
+                Session.save()
+                viewSettings.visible = false
+            }
+
+            text: "确定"
+        }
     }
 
     StackLayout {

@@ -11,6 +11,7 @@ Window {
     height: 480
     title: qsTr("电子沙盘")
     color: "black"
+    visibility: Window.FullScreen
 
     Timer {
         id: timerSandBoxAction
