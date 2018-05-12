@@ -4,8 +4,8 @@ import QtQuick 2.10
 
 QtObject {
     readonly property ListModel actions: ListModel {
-        ListElement { text: "打开全部灯光"; command: "AAA000" }
-        ListElement { text: "关闭全部灯光"; command: "AAA000" }
+        ListElement { text: "打开全部灯光"; command: "AAA000,AAA001" }
+        ListElement { text: "关闭全部灯光"; command: "AAA002" }
     }
 
     property ListModel modelSandBoxLights: ListModel {}

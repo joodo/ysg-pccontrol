@@ -26,6 +26,11 @@ QString Backend::loadFromFile(const QString &path)
     }
 }
 
+void Backend::lightAction(const QString &command)
+{
+    m_socketSandBox.sendCommand(command);
+}
+
 void Backend::onCommandReceived(const QString &command)
 {
     qDebug(command.toUtf8());

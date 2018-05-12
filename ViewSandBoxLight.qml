@@ -98,6 +98,7 @@ Rectangle {
                                     width: 140
                                     textRole: "text"
                                     model: Session.actions
+                                    currentIndex: actionIndex
                                     onCurrentIndexChanged: repeater.model.setProperty(index, "actionIndex", currentIndex)
                                 }
                                 Button {

@@ -6,6 +6,8 @@
 #include <QTcpServer>
 #include <QTcpSocket>
 
+#include "socketsandbox.h"
+
 class Backend : public QObject
 {
     Q_OBJECT
@@ -18,10 +20,13 @@ signals:
 public slots:
     void saveToFile(const QString& data, const QString& path);
     QString loadFromFile(const QString& path);
+    void lightAction(const QString& command);
 
 private:
     QTcpServer *m_server;
     QTcpSocket *m_socket;
+
+    SocketSandBox m_socketSandBox;
 
 private slots:
     void onCommandReceived(const QString& command);
