@@ -9,7 +9,13 @@ Rectangle {
         id: buttonAddTimePoint
         x: 8; y: 8
         text: "添加时间点"
-        onClicked: Session.modelSandBoxLight.append({ modelActions: Qt.createQmlObject("import QtQuick 2.10; ListModel{}", Session.modelSandBoxLight)})
+        onClicked: {
+            var data = {}
+            data.modelActions = Qt.createQmlObject("import QtQuick 2.10; ListModel{}", Session.modelSandBoxLights)
+            data.timePoint = 0
+            Session.modelSandBoxLights.append(data)
+            listViewSandBoxLight.positionViewAtEnd()
+        }
     }
 
     Rectangle {
@@ -21,7 +27,7 @@ Rectangle {
             anchors { fill: parent; margins: 4 }
             spacing: 1
             clip: true
-            model: Session.modelSandBoxLight
+            model: Session.modelSandBoxLights
             delegate: Rectangle {
                 width: parent.width; height: Math.max(listViewActions.height, columnLabel.height) + 8
                 RowLayout {
@@ -32,7 +38,17 @@ Rectangle {
                         Layout.preferredWidth: 100
                         Text {
                             Layout.alignment: Qt.AlignRight
-                            text: "05:24"
+                            text: {
+                                var text = ""
+                                var m = Math.floor(timePoint / 60)
+                                var s = timePoint % 60
+                                if (m < 10) text += "0"
+                                text += m
+                                text += ":"
+                                if (s < 10) text += "0"
+                                text += s
+                                text
+                            }
                             font.pointSize: 32
                         }
                         Button {
@@ -47,6 +63,7 @@ Rectangle {
                             Layout.preferredHeight: 24
                             Layout.preferredWidth: 86
                             text: "修改时间点"
+                            onClicked: rectInputMask.visible = true
                         }
                         Button {
                             Layout.alignment: Qt.AlignRight
@@ -54,7 +71,7 @@ Rectangle {
                             Layout.preferredWidth: 70
                             text: "添加活动"
                             onClicked: {
-                                modelActions.append({})
+                                modelActions.append({ actionIndex: 0 })
                             }
                         }
                     }
@@ -74,12 +91,14 @@ Rectangle {
                             id: repeater
                             model: modelActions
                             delegate: Rectangle {
-                                color: "khaki"
+                                color: "chocolate"
                                 height: 32; width: 220
-                                Text {
-                                    x: 8
-                                    anchors.verticalCenter: parent.verticalCenter
-                                    text: "点亮故宫博物院啊啊"
+                                ComboBox {
+                                    anchors { top: parent.top; bottom: parent.bottom; left: parent.left }
+                                    width: 140
+                                    textRole: "text"
+                                    model: Session.actions
+                                    onCurrentIndexChanged: repeater.model.setProperty(index, "actionIndex", currentIndex)
                                 }
                                 Button {
                                     anchors { top: parent.top; bottom: parent.bottom; right: parent.right }
@@ -89,6 +108,59 @@ Rectangle {
                                 }
                             }
                         }
+                    }
+                }
+                Rectangle {
+                    id: rectInputMask
+
+                    onVisibleChanged: {
+                        if (visible) {
+                            var m = Math.floor(timePoint / 60)
+                            var s = timePoint % 60
+                            var text = ""
+
+                            if (m < 10) text += "0"
+                            text += m
+                            inputMinute.text = text
+
+                            text = ""
+                            if (s < 10) text += "0"
+                            text += s
+                            inputSecond.text = text
+                        } else {
+                            var t = parseInt(inputMinute.text)*60 + parseInt(inputSecond.text)
+                            listViewSandBoxLight.model.setProperty(index, "timePoint", t)
+                        }
+                    }
+                    Component.onCompleted: visible = modelActions.count===0
+
+                    anchors.fill: parent
+                    z: 1
+                    visible: false
+                    Text {
+                        anchors.centerIn: parent
+                        font.pointSize: 54
+                        text: ":"
+                    }
+                    TextInput {
+                        id: inputMinute
+                        onFocusChanged: if(focus) selectAll()
+                        onTextChanged: if(text.length === 2) inputSecond.focus = true
+                        inputMask: "99"
+                        anchors { centerIn: parent; horizontalCenterOffset: -48 }
+                        font.pointSize: 54
+                    }
+                    TextInput {
+                        id: inputSecond
+                        onFocusChanged: if(focus) selectAll()
+                        inputMask: "99"
+                        anchors { centerIn: parent; horizontalCenterOffset: 48 }
+                        font.pointSize: 54
+                    }
+                    Button {
+                        anchors { verticalCenter: parent.verticalCenter; left: inputSecond.right; leftMargin: 24 }
+                        text: "确定"
+                        onClicked: rectInputMask.visible = false
                     }
                 }
             }

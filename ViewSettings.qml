@@ -2,9 +2,13 @@ import QtQuick 2.10
 import QtQuick.Controls 2.2
 import QtQuick.Layouts 1.3
 
+import PcControl 1.0
+
 Rectangle {
     id: viewSettings
     color: "lightblue"
+    Component.onCompleted: Session.load()
+
     TabBar {
         id: tabBar
         TabButton {
@@ -19,7 +23,7 @@ Rectangle {
         id: buttonSaveAndQuit
 
         onClicked: {
-            // TODO: save
+            Session.save()
             viewSettings.visible = false
         }
 
