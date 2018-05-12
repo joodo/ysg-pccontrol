@@ -1,6 +1,9 @@
 import QtQuick 2.10
 import QtQuick.Window 2.10
 import QtQuick.Controls 2.2
+import QtMultimedia 5.8
+
+import PcControl 1.0
 
 Window {
     visible: true
@@ -23,14 +26,43 @@ Window {
         }
     }
 
+    VideoOutput {
+        anchors.fill: parent
+        source: mediaplayer
+        MediaPlayer {
+            id: mediaplayer
+        }
+    }
+
     MouseArea {
+        id: mouseArea
         anchors.fill: parent
         onClicked: { viewSettings.visible = true }
+        focus: true
+        Keys.onPressed: {
+            if (event.key === Qt.Key_A) {
+                mediaplayer.source = Session.videoPath[0]
+                mediaplayer.play()
+            }
+            if (event.key === Qt.Key_B) {
+                mediaplayer.source = Session.videoPath[1]
+                mediaplayer.play()
+            }
+            if (event.key === Qt.Key_C) {
+                mediaplayer.source = Session.videoPath[2]
+                mediaplayer.play()
+            }
+            if (event.key === Qt.Key_Space) {
+                mediaplayer.stop()
+            }
+        }
     }
 
     ViewSettings {
         id: viewSettings
         anchors.fill: parent
         visible: false
+        onVisibleChanged: if (!visible) mouseArea.focus = true
     }
+
 }

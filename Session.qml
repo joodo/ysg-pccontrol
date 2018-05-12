@@ -31,7 +31,6 @@ QtObject {
     }
     function load() {
         var file = Backend.loadFromFile("save")
-        print(file)
         var data = JSON.parse(file)
         if (!data) return
 
