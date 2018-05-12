@@ -23,8 +23,10 @@ private:
     QTcpServer *m_server;
     QTcpSocket *m_socket;
 
-private:
+private slots:
     void onCommandReceived(const QString& command);
+    void onNewConnection();
+    void onReadyRead();
 };
 
 #endif // BACKEND_H

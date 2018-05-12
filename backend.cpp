@@ -4,12 +4,7 @@ Backend::Backend(QObject *parent) : QObject(parent)
 {
     m_server = new QTcpServer();
     m_server->listen(QHostAddress::Any, 8899);
-    connect(m_server, &QTcpServer::newConnection, [=]() {
-        m_socket = m_server->nextPendingConnection();
-        connect(m_socket, &QAbstractSocket::readyRead, [=]() {
-            emit commandReceived(m_socket->readAll());
-        });
-    });
+    connect(m_server, &QTcpServer::newConnection, this, &Backend::onNewConnection);
     connect(this, &Backend::commandReceived, &Backend::onCommandReceived);
 }
 
@@ -34,4 +29,16 @@ QString Backend::loadFromFile(const QString &path)
 void Backend::onCommandReceived(const QString &command)
 {
     qDebug(command.toUtf8());
+}
+
+void Backend::onNewConnection()
+{
+    m_socket = m_server->nextPendingConnection();
+    connect(m_socket, &QAbstractSocket::readyRead, this, &Backend::onReadyRead);
+}
+
+void Backend::onReadyRead()
+{
+    auto socket = qobject_cast<QAbstractSocket*>(sender());
+    emit commandReceived(socket->readAll());
 }
