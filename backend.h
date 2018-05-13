@@ -24,6 +24,7 @@ public slots:
     QString loadFromFile(const QString& path);
     void lightAction(const QString& command);
     void openChrome(const QString& chromePath);
+    void shutdown();
 
 private:
     QTcpServer *m_server;

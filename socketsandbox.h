@@ -1,7 +1,8 @@
-#ifndef SOCKETSANDBOX_H
+﻿#ifndef SOCKETSANDBOX_H
 #define SOCKETSANDBOX_H
 
 #include <QTcpSocket>
+#include <QTimer>
 
 class SocketSandBox : public QTcpSocket
 {

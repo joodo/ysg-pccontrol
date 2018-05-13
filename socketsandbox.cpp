@@ -1,4 +1,4 @@
-#include "socketsandbox.h"
+﻿#include "socketsandbox.h"
 
 SocketSandBox::SocketSandBox(QObject *parent) : QTcpSocket(parent)
 {
@@ -10,9 +10,11 @@ void SocketSandBox::sendCommand(const QString &command)
     if (state() != QAbstractSocket::ConnectedState) {
         connectToSandBox();
     }
-    for (const QString& c : command.split(',', QString::SkipEmptyParts)) {
-        write(QByteArray::fromHex(c.toUtf8()));
-        qDebug(c.toUtf8());
+    QStringList commands = command.split(',', QString::SkipEmptyParts);
+    write(QByteArray::fromHex(commands.at(0).toUtf8()));
+    qDebug(commands.at(0).toUtf8());
+    if (commands.count() > 1) {
+        QTimer::singleShot(20, [=]() { write(QByteArray::fromHex(commands.at(1).toUtf8())); });
     }
 }
 

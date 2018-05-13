@@ -15,9 +15,9 @@ Window {
     Timer {
         id: timerSandBoxAction
         property var actions
-        property int position
+        property int position: -1
 
-        function restart() {
+        function loadAndPlay() {
             position = 0
 
             actions = {}
@@ -29,58 +29,47 @@ Window {
                     actions[element.timePoint].push(Session.actions.get(index).command)
                 }
             }
+
+            start()
         }
+        function pause() {
+            stop()
+        }
+        function play() {
+            if (position < 0) return
+            start()
+        }
+        function end() {
+            position = -1
+            stop()
+        }
+
         onTriggered: {
             var action = actions[position]
             if (action) {
-                print(position)
-                for (var i in action) {
-                    Backend.lightAction(action[i])
-                }
-                actions[position] = null
+                timerCommandSender.send(action)
             }
-
             position++
         }
 
         interval: 1000; repeat: true; triggeredOnStart: true
     }
-
-    /*
-    VideoOutput {
-        anchors.fill: parent
-        source: mediaplayer
-    }
-    MediaPlayer {
-        id: mediaplayer
-        property int videoType: 0
-        function playVideo(name) {
-            switch (name) {
-            case "a":
-            case "b":
-            case "c":
-                videoType = name.charCodeAt(0)-"a".charCodeAt(0)
-                source = Session.videoPath[videoType]
-                play()
-                break;
-            default: ;
-            }
+    Timer {
+        id: timerCommandSender
+        property var commandList
+        function send(cl) {
+            commandList = cl
+            start()
         }
-        onPlaybackStateChanged: {
-            if (playbackState === MediaPlayer.PlayingState) {
-                if (videoType === 2) {
-                    // 执行ppt播放
-                } else {
-                    timerSandBoxAction.initActions()
-                    timerSandBoxAction.start()
-                }
+        onTriggered: {
+            if (commandList && commandList.length>0) {
+                Backend.lightAction(commandList.shift())
             } else {
-                timerSandBoxAction.stop()
+                stop()
             }
         }
-        volume: 0.5
-        loops: videoType===2? MediaPlayer.Infinite : 1
-    }*/
+        interval: 100; repeat: true; triggeredOnStart: true
+    }
 
     MouseArea {
         id: mouseArea
@@ -90,7 +79,7 @@ Window {
         Keys.onPressed: {
             if (event.key === Qt.Key_Space) {
             } else {
-                socketVideoPlay.send(event.text)
+                Backend.commandReceived(event.text)
             }
         }
     }
@@ -105,34 +94,31 @@ Window {
     Connections {
         target: Backend
         onCommandReceived: {
-            socketVideoPlay.send(command)
-            return
+            if (command === "shutdown") {
+                Backend.shutdown()
+                return
+            }
             switch(command) {
             case "a":
             case "b":
+                timerSandBoxAction.loadAndPlay()
+                break
             case "c":
-                mediaplayer.playVideo(command)
-                break
-            case "volumeup":
-                if (mediaplayer.volume < 1.0) mediaplayer.volume += 0.1
-                break
-            case "volumedown":
-                if (mediaplayer.volume > 0.0) mediaplayer.volume -= 0.1
-                break
-            case "mute":
-                mediaplayer.muted = !mediaplayer.muted
+                Backend.lightAction("1b43dd0d0a970080") //stop
                 break
             case "play":
-                mediaplayer.play()
+                timerSandBoxAction.play()
                 break
             case "stop":
-                mediaplayer.stop()
+                Backend.lightAction("1b43dd0d0a970080") //stop
+                timerSandBoxAction.end()
                 break
             case "pause":
-                mediaplayer.pause()
+                timerSandBoxAction.pause()
                 break;
             default: ;
             }
+            socketVideoPlay.send(command)
         }
     }
 

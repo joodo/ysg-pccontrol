@@ -38,6 +38,11 @@ void Backend::openChrome(const QString &chromePath)
     m_process.start(path + " --kiosk localhost");
 }
 
+void Backend::shutdown()
+{
+    QProcess::startDetached("shutdown -s -f -t 00");
+}
+
 void Backend::onCommandReceived(const QString &command)
 {
     qDebug(command.toUtf8());
