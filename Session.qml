@@ -30,9 +30,19 @@ QtObject {
         Backend.saveToFile(JSON.stringify(data), "save")
     }
     function load() {
-        var file = Backend.loadFromFile("save")
-        var data = JSON.parse(file)
-        if (!data) return
+        loadFromFile("save")
+    }
+    function reset() {
+        loadFromFile("null")
+    }
+    function loadFromFile(path) {
+        var file = Backend.loadFromFile(path)
+        try {
+            var data = JSON.parse(file)
+        } catch (e) {
+            if (path !== "defaultSave") loadFromFile("defaultSave")
+            return
+        }
 
         videoPath = data.videoPath
         for (var i in data.sandBoxLights) {

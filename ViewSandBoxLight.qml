@@ -1,4 +1,5 @@
 import QtQuick 2.10
+import QtQuick.Window 2.10
 import QtQuick.Layouts 1.3
 import QtQuick.Controls 2.2
 
@@ -86,7 +87,7 @@ Rectangle {
                         Layout.topMargin: 4
                         spacing: 2
                         Layout.fillWidth: true
-                        columns: Math.floor(width / (220+spacing))
+                        columns: Math.floor((Screen.desktopAvailableWidth-135) / (220+spacing))
                         Repeater {
                             id: repeater
                             model: modelActions

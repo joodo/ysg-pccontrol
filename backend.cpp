@@ -24,6 +24,7 @@ QString Backend::loadFromFile(const QString &path)
     } else {
         return "";
     }
+    file.close();
 }
 
 void Backend::lightAction(const QString &command)

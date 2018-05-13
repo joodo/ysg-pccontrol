@@ -11,7 +11,7 @@ Window {
     height: 480
     title: qsTr("电子沙盘")
     color: "black"
-    visibility: Window.FullScreen
+    //visibility: Window.FullScreen
 
     Timer {
         id: timerSandBoxAction
@@ -59,36 +59,36 @@ Window {
     VideoOutput {
         anchors.fill: parent
         source: mediaplayer
-        MediaPlayer {
-            id: mediaplayer
-            property int videoType: 0
-            function playVideo(name) {
-                switch (name) {
-                case "a":
-                case "b":
-                case "c":
-                    videoType = name.charCodeAt(0)-"a".charCodeAt(0)
-                    source = Session.videoPath[videoType]
-                    play()
-                    break;
-                default: ;
-                }
+    }
+    MediaPlayer {
+        id: mediaplayer
+        property int videoType: 0
+        function playVideo(name) {
+            switch (name) {
+            case "a":
+            case "b":
+            case "c":
+                videoType = name.charCodeAt(0)-"a".charCodeAt(0)
+                source = Session.videoPath[videoType]
+                play()
+                break;
+            default: ;
             }
-            onPlaybackStateChanged: {
-                if (playbackState === MediaPlayer.PlayingState) {
-                    if (videoType === 2) {
-                        // 执行ppt播放
-                    } else {
-                        timerSandBoxAction.initActions()
-                        timerSandBoxAction.running = true
-                    }
-                } else {
-                    timerSandBoxAction.running = false
-                }
-            }
-            volume: 0.5
-            loops: videoType===2? MediaPlayer.Infinite : 1
         }
+        onPlaybackStateChanged: {
+            if (playbackState === MediaPlayer.PlayingState) {
+                if (videoType === 2) {
+                    // 执行ppt播放
+                } else {
+                    timerSandBoxAction.initActions()
+                    timerSandBoxAction.start()
+                }
+            } else {
+                timerSandBoxAction.stop()
+            }
+        }
+        volume: 0.5
+        loops: videoType===2? MediaPlayer.Infinite : 1
     }
 
     MouseArea {
