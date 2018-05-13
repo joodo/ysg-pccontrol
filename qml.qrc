@@ -5,5 +5,6 @@
         <file>ViewVideoPath.qml</file>
         <file>Session.qml</file>
         <file>ViewSandBoxLight.qml</file>
+        <file>ViewActionString.qml</file>
     </qresource>
 </RCC>

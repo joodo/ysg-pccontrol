@@ -3,17 +3,28 @@
 import QtQuick 2.10
 
 QtObject {
-    readonly property ListModel actions: ListModel {
-        ListElement { text: "打开全部灯光"; command: "AAA000,AAA001" }
-        ListElement { text: "关闭全部灯光"; command: "AAA002" }
+    property ListModel actions: ListModel {
     }
 
     property ListModel modelSandBoxLights: ListModel {}
-    property var videoPath: ["点击设置", "点击设置", "点击设置"]
+    property string chromeUrl: ""
+    property string actionString: ""
+
+    onActionStringChanged: {
+        actions.clear()
+        var aas = actionString.split("\n")
+        for (var i in aas) {
+            var aa = aas[i].split(":")
+            if (aa.length > 1) {
+                actions.append({ text: aa[0], command: aa[1] })
+            }
+        }
+    }
 
     function save() {
         var data = {
-            videoPath: videoPath,
+            chromeUrl: chromeUrl,
+            actionString: actionString,
             sandBoxLights: []
         }
         for (var i = 0; i < modelSandBoxLights.count; i++) {
@@ -31,6 +42,7 @@ QtObject {
     }
     function load() {
         loadFromFile("save")
+        Backend.openChrome(chromeUrl)
     }
     function reset() {
         loadFromFile("null")
@@ -44,7 +56,9 @@ QtObject {
             return
         }
 
-        videoPath = data.videoPath
+        chromeUrl = data.chromeUrl
+        actionString = data.actionString
+
         for (var i in data.sandBoxLights) {
             var sandBoxLight = data.sandBoxLights[i]
 

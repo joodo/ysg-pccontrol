@@ -21,8 +21,7 @@ Rectangle {
         spacing: 2
 
         Button { text: "重置"; width: 50; onClicked: Session.reset() }
-        Button { text: "取消"; width: 50; onClicked: { Session.load(); viewSettings.visible = false } }
-        Button { text: "确定"; width: 50; onClicked: { Session.save(); viewSettings.visible = false } }
+        Button { text: "应用"; width: 50; onClicked: { Session.save(); viewSettings.visible = false } }
     }
 
     StackLayout {
@@ -34,5 +33,6 @@ Rectangle {
 
         ViewVideoPath {}
         ViewSandBoxLight {}
+        ViewActionString {}
     }
 }

@@ -34,7 +34,8 @@ void Backend::lightAction(const QString &command)
 
 void Backend::openChrome(const QString &chromePath)
 {
-    m_process.start("C:/Users/Cloudist/AppData/Local/Google/Chrome/Application/chrome.exe --kiosk localhost");
+    auto path = QUrl(chromePath).toLocalFile();
+    m_process.start(path + " --kiosk localhost");
 }
 
 void Backend::onCommandReceived(const QString &command)

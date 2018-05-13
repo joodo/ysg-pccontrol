@@ -6,6 +6,7 @@
 #include <QTcpServer>
 #include <QTcpSocket>
 #include <QProcess>
+#include <QUrl>
 
 #include "socketsandbox.h"
 

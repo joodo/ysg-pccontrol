@@ -12,11 +12,14 @@ Window {
     title: qsTr("电子沙盘")
     color: "black"
 
-    /*
     Timer {
         id: timerSandBoxAction
         property var actions
-        function initActions() {
+        property int position
+
+        function restart() {
+            position = 0
+
             actions = {}
             for (var i = 0; i < Session.modelSandBoxLights.count; i++) {
                 var element = Session.modelSandBoxLights.get(i)
@@ -28,7 +31,6 @@ Window {
             }
         }
         onTriggered: {
-            var position = Math.floor(mediaplayer.position/1000)
             var action = actions[position]
             if (action) {
                 print(position)
@@ -37,10 +39,12 @@ Window {
                 }
                 actions[position] = null
             }
+
+            position++
         }
 
         interval: 1000; repeat: true; triggeredOnStart: true
-    }*/
+    }
 
     /*
     VideoOutput {
@@ -139,9 +143,5 @@ Window {
 
         listen: true; port: 8900
         onClientConnected: { socket = webSocket; send('hello') }
-    }
-
-    Item {
-        Component.onCompleted: Backend.openChrome("")
     }
 }
