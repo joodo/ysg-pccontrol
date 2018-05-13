@@ -1,4 +1,4 @@
-import QtQuick 2.10
+﻿import QtQuick 2.10
 import QtQuick.Controls 2.2
 import QtQuick.Layouts 1.3
 
@@ -20,7 +20,6 @@ Rectangle {
         anchors { right: parent.right; top: parent.top }
         spacing: 2
 
-        Button { text: "退出"; width: 50; onClicked: Qt.quit() }
         Button { text: "重置"; width: 50; onClicked: Session.reset() }
         Button { text: "取消"; width: 50; onClicked: { Session.load(); viewSettings.visible = false } }
         Button { text: "确定"; width: 50; onClicked: { Session.save(); viewSettings.visible = false } }

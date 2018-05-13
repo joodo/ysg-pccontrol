@@ -1,4 +1,4 @@
-QT += quick multimedia network
+QT += quick network websockets
 CONFIG += c++11
 
 # The following define makes your compiler emit warnings if you use

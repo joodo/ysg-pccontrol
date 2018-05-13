@@ -1,4 +1,4 @@
-#include "backend.h"
+﻿#include "backend.h"
 
 Backend::Backend(QObject *parent) : QObject(parent)
 {
@@ -30,6 +30,11 @@ QString Backend::loadFromFile(const QString &path)
 void Backend::lightAction(const QString &command)
 {
     m_socketSandBox.sendCommand(command);
+}
+
+void Backend::openChrome(const QString &chromePath)
+{
+    m_process.start("C:/Users/Cloudist/AppData/Local/Google/Chrome/Application/chrome.exe --kiosk localhost");
 }
 
 void Backend::onCommandReceived(const QString &command)

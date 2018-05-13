@@ -1,7 +1,7 @@
-import QtQuick 2.10
+﻿import QtQuick 2.10
 import QtQuick.Window 2.10
 import QtQuick.Controls 2.2
-import QtMultimedia 5.8
+import QtWebSockets 1.1
 
 import PcControl 1.0
 
@@ -11,8 +11,8 @@ Window {
     height: 480
     title: qsTr("电子沙盘")
     color: "black"
-    //visibility: Window.FullScreen
 
+    /*
     Timer {
         id: timerSandBoxAction
         property var actions
@@ -40,22 +40,9 @@ Window {
         }
 
         interval: 1000; repeat: true; triggeredOnStart: true
-    }
+    }*/
 
-    Text {
-        anchors.centerIn: parent
-        font.pointSize: 54
-        color: "white"
-        text: "准备就绪！可以开始播放视频"
-        Timer {
-            interval: 3000; running: true
-            onTriggered: {
-                running = false
-                parent.visible = false
-            }
-        }
-    }
-
+    /*
     VideoOutput {
         anchors.fill: parent
         source: mediaplayer
@@ -89,7 +76,7 @@ Window {
         }
         volume: 0.5
         loops: videoType===2? MediaPlayer.Infinite : 1
-    }
+    }*/
 
     MouseArea {
         id: mouseArea
@@ -98,11 +85,8 @@ Window {
         focus: true
         Keys.onPressed: {
             if (event.key === Qt.Key_Space) {
-                mediaplayer.stop()
-            } else if (event.key === Qt.Key_Escape) {
-                Qt.quit()
             } else {
-                mediaplayer.playVideo(event.text)
+                socketVideoPlay.send(event.text)
             }
         }
     }
@@ -117,6 +101,8 @@ Window {
     Connections {
         target: Backend
         onCommandReceived: {
+            socketVideoPlay.send(command)
+            return
             switch(command) {
             case "a":
             case "b":
@@ -144,5 +130,18 @@ Window {
             default: ;
             }
         }
+    }
+
+    WebSocketServer {
+        id: socketVideoPlay
+        property WebSocket socket
+        function send(message) { socket.sendTextMessage(message) }
+
+        listen: true; port: 8900
+        onClientConnected: { socket = webSocket; send('hello') }
+    }
+
+    Item {
+        Component.onCompleted: Backend.openChrome("")
     }
 }
