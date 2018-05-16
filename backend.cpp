@@ -35,7 +35,7 @@ void Backend::lightAction(const QString &command)
 void Backend::openChrome(const QString &chromePath)
 {
     auto path = QUrl(chromePath).toLocalFile();
-    m_process.start(path + " --kiosk localhost");
+    m_process.start(path + " --disable-infobars --kiosk localhost");
 }
 
 void Backend::shutdown()

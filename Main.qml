@@ -10,7 +10,7 @@ Window {
     width: 640
     height: 480
     title: qsTr("电子沙盘")
-    color: "black"
+    color: "green"
 
     Timer {
         id: timerSandBoxAction
@@ -68,13 +68,17 @@ Window {
                 stop()
             }
         }
-        interval: 100; repeat: true; triggeredOnStart: true
+        interval: 150; repeat: true; triggeredOnStart: true
     }
 
     MouseArea {
         id: mouseArea
         anchors.fill: parent
-        onClicked: { viewSettings.visible = true }
+        onClicked: {
+            if (Backend.loadFromFile("dandandan") === "pass") {
+                viewSettings.visible = true
+            }
+        }
         focus: true
         Keys.onPressed: {
             if (event.key === Qt.Key_Space) {

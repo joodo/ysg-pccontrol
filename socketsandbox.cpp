@@ -14,7 +14,7 @@ void SocketSandBox::sendCommand(const QString &command)
     write(QByteArray::fromHex(commands.at(0).toUtf8()));
     qDebug(commands.at(0).toUtf8());
     if (commands.count() > 1) {
-        QTimer::singleShot(20, [=]() { write(QByteArray::fromHex(commands.at(1).toUtf8())); });
+        QTimer::singleShot(50, [=]() { write(QByteArray::fromHex(commands.at(1).toUtf8())); });
     }
 }
 
