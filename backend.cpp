@@ -91,5 +91,9 @@ void Backend::onNewConnection()
 void Backend::onReadyRead()
 {
     auto socket = qobject_cast<QAbstractSocket*>(sender());
-    emit commandReceived(socket->readAll());
+    auto message = QString(socket->readAll());
+    if (message == "ping") {
+        socket->write("pong");
+    }
+    emit commandReceived(message);
 }
