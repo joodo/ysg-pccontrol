@@ -7,6 +7,8 @@
 #include <QTcpSocket>
 #include <QProcess>
 #include <QUrl>
+#include <QFileInfo>
+#include <QDateTime>
 
 #include <Windows.h>
 #pragma comment(lib, "User32.lib")
@@ -24,7 +26,13 @@ private:
 
 signals:
     void commandReceived(const QString& command);
+
+signals:
     void log(const QString& message);
+private slots:
+    void writeLogToFile(const QString& message);
+private:
+    QFile *m_logFile = nullptr;
 
 public slots:
     void saveToFile(const QString& data, const QString& path);

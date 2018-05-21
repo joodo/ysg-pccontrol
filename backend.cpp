@@ -4,7 +4,7 @@ Backend* Backend::m_instance = nullptr;
 
 void myMessageOutput(QtMsgType type, const QMessageLogContext &context, const QString &msg)
 {
-    Backend::instance()->log(msg);
+    Backend::instance()->log(QDateTime::currentDateTime().toString(Qt::ISODate) + ": " + msg);
 }
 
 Backend::Backend(QObject *parent) : QObject(parent)
@@ -17,6 +17,7 @@ Backend::Backend(QObject *parent) : QObject(parent)
     QTimer::singleShot(3000, []() {SetCursorPos(10000, 10000);});
 
     qInstallMessageHandler(myMessageOutput);
+    connect(this, &Backend::log, &Backend::writeLogToFile);
 }
 
 Backend *Backend::instance()
@@ -25,6 +26,20 @@ Backend *Backend::instance()
         m_instance = new Backend();
     }
     return m_instance;
+}
+
+void Backend::writeLogToFile(const QString &message)
+{
+    if (m_logFile == nullptr) {
+        m_logFile = new QFile("ysg-log.txt");
+    }
+    if (QFileInfo("ysg-log.txt").size() > 1024) {
+        m_logFile->open(QIODevice::WriteOnly | QIODevice::Text);
+    } else {
+        m_logFile->open(QIODevice::Append | QIODevice::Text);
+    }
+    m_logFile->write((message+'\n').toUtf8());
+    m_logFile->close();
 }
 
 void Backend::saveToFile(const QString &data, const QString &path)
