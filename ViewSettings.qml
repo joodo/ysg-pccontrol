@@ -14,6 +14,7 @@ Rectangle {
         TabButton { text: "视频路径" }
         TabButton { text: "沙盘灯光" }
         TabButton { text: "动作参数" }
+        TabButton { text: "系统日志" }
     }
 
     Row {
@@ -34,5 +35,6 @@ Rectangle {
         ViewVideoPath {}
         ViewSandBoxLight {}
         ViewActionString {}
+        ViewLog {}
     }
 }

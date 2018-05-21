@@ -1,11 +1,30 @@
 ﻿#include "backend.h"
 
+Backend* Backend::m_instance = nullptr;
+
+void myMessageOutput(QtMsgType type, const QMessageLogContext &context, const QString &msg)
+{
+    Backend::instance()->log(msg);
+}
+
 Backend::Backend(QObject *parent) : QObject(parent)
 {
     m_server = new QTcpServer();
     m_server->listen(QHostAddress::Any, 8899);
     connect(m_server, &QTcpServer::newConnection, this, &Backend::onNewConnection);
     connect(this, &Backend::commandReceived, &Backend::onCommandReceived);
+
+    QTimer::singleShot(3000, []() {SetCursorPos(10000, 10000);});
+
+    qInstallMessageHandler(myMessageOutput);
+}
+
+Backend *Backend::instance()
+{
+    if (m_instance == nullptr) {
+        m_instance = new Backend();
+    }
+    return m_instance;
 }
 
 void Backend::saveToFile(const QString &data, const QString &path)

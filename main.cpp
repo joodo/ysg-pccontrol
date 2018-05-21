@@ -1,4 +1,4 @@
-#include <QGuiApplication>
+﻿#include <QGuiApplication>
 #include <QQmlApplicationEngine>
 #include <QQmlContext>
 
@@ -13,8 +13,7 @@ int main(int argc, char *argv[])
     QQmlApplicationEngine engine;
     qmlRegisterSingletonType(QUrl("qrc:/Session.qml"), "PcControl", 1, 0, "Session");
 
-    Backend backend;
-    engine.rootContext()->setContextProperty("Backend", &backend);
+    engine.rootContext()->setContextProperty("Backend", Backend::instance());
 
     engine.load(QUrl(QStringLiteral("qrc:/Main.qml")));
     if (engine.rootObjects().isEmpty())

@@ -8,6 +8,9 @@
 #include <QProcess>
 #include <QUrl>
 
+#include <Windows.h>
+#pragma comment(lib, "User32.lib")
+
 #include "socketsandbox.h"
 
 class Backend : public QObject
@@ -15,9 +18,13 @@ class Backend : public QObject
     Q_OBJECT
 public:
     explicit Backend(QObject *parent = nullptr);
+    static Backend* instance();
+private:
+    static Backend* m_instance;
 
 signals:
     void commandReceived(const QString& command);
+    void log(const QString& message);
 
 public slots:
     void saveToFile(const QString& data, const QString& path);

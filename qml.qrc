@@ -6,5 +6,6 @@
         <file>Session.qml</file>
         <file>ViewSandBoxLight.qml</file>
         <file>ViewActionString.qml</file>
+        <file>ViewLog.qml</file>
     </qresource>
 </RCC>

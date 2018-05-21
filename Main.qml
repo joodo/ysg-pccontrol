@@ -23,6 +23,7 @@ Window {
             actions = {}
             for (var i = 0; i < Session.modelSandBoxLights.count; i++) {
                 var element = Session.modelSandBoxLights.get(i)
+                //if (!element || !element.modelActions || (element.timePoint!==0 && !element.timePoint)) continue;
                 actions[element.timePoint] = []
                 for (var j = 0; j < element.modelActions.count; j++) {
                     var index = element.modelActions.get(j).actionIndex
@@ -98,6 +99,7 @@ Window {
     Connections {
         target: Backend
         onCommandReceived: {
+            print("got ipad message: "+message)
             if (command === "shutdown") {
                 Backend.shutdown()
                 return
@@ -129,7 +131,10 @@ Window {
     WebSocketServer {
         id: socketVideoPlay
         property WebSocket socket
-        function send(message) { socket.sendTextMessage(message) }
+        function send(message) {
+            print("send chrome message: "+message)
+            socket.sendTextMessage(message)
+        }
 
         listen: true; port: 8900
         onClientConnected: { socket = webSocket; send('hello') }
