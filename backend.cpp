@@ -18,6 +18,25 @@ Backend::Backend(QObject *parent) : QObject(parent)
 
     qInstallMessageHandler(myMessageOutput);
     connect(this, &Backend::log, &Backend::writeLogToFile);
+
+    // 获取本地 ip
+    QString localAddress;
+    for (const QHostAddress& address : QNetworkInterface::allAddresses()) {
+        localAddress = address.toString();
+        if (localAddress.startsWith("192.168.1.")) {
+            break;
+        }
+    }
+    localAddress = "ysgserver:" + localAddress;
+
+    // UDP 广播 ip 地址
+    m_udpsocket = new QUdpSocket();
+    QTimer *timer = new QTimer();
+    timer->setInterval(500);
+    connect(timer, &QTimer::timeout, [=](){
+        m_udpsocket->writeDatagram(localAddress.toUtf8(), QHostAddress::Broadcast, 8901);
+    });
+    timer->start();
 }
 
 Backend *Backend::instance()
@@ -79,7 +98,7 @@ void Backend::shutdown()
 
 void Backend::onCommandReceived(const QString &command)
 {
-    qDebug(command.toUtf8());
+   // qDebug(command.toUtf8());
 }
 
 void Backend::onNewConnection()

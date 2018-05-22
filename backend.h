@@ -9,6 +9,9 @@
 #include <QUrl>
 #include <QFileInfo>
 #include <QDateTime>
+#include <QHostAddress>
+#include <QNetworkInterface>
+#include <QUdpSocket>
 
 #include <Windows.h>
 #pragma comment(lib, "User32.lib")
@@ -45,6 +48,7 @@ private:
     QTcpServer *m_server;
     QTcpSocket *m_socket;
     QProcess m_process;
+    QUdpSocket *m_udpsocket;
 
     SocketSandBox m_socketSandBox;
 

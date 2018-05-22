@@ -99,7 +99,7 @@ Window {
     Connections {
         target: Backend
         onCommandReceived: {
-            print("got ipad message: "+message)
+            print("got ipad message: "+command)
             if (command === "shutdown") {
                 Backend.shutdown()
                 return
