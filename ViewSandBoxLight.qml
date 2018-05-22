@@ -6,6 +6,12 @@ import QtQuick.Controls 2.2
 import PcControl 1.0
 
 Rectangle {
+    onVisibleChanged: {
+        if (visible) {
+            Session.modelSandBoxLights.sort()
+        }
+    }
+
     Button {
         id: buttonAddTimePoint
         x: 8; y: 8

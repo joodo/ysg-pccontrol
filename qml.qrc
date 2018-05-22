@@ -7,5 +7,6 @@
         <file>ViewSandBoxLight.qml</file>
         <file>ViewActionString.qml</file>
         <file>ViewLog.qml</file>
+        <file>ModelSandBoxLights.qml</file>
     </qresource>
 </RCC>

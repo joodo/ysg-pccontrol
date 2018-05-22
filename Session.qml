@@ -6,7 +6,7 @@ QtObject {
     property ListModel actions: ListModel {
     }
 
-    property ListModel modelSandBoxLights: ListModel {}
+    property ModelSandBoxLights modelSandBoxLights: ModelSandBoxLights {}
     property string chromeUrl: ""
     property string actionString: ""
 
