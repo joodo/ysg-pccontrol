@@ -19,22 +19,20 @@ Backend::Backend(QObject *parent) : QObject(parent)
     qInstallMessageHandler(myMessageOutput);
     connect(this, &Backend::log, &Backend::writeLogToFile);
 
-    // 获取本地 ip
-    QString localAddress;
-    for (const QHostAddress& address : QNetworkInterface::allAddresses()) {
-        localAddress = address.toString();
-        if (localAddress.startsWith("192.168.1.")) {
-            break;
-        }
-    }
-    localAddress = "ysgserver:" + localAddress;
-
     // UDP 广播 ip 地址
     m_udpsocket = new QUdpSocket();
     QTimer *timer = new QTimer();
     timer->setInterval(500);
     connect(timer, &QTimer::timeout, [=](){
-        m_udpsocket->writeDatagram(localAddress.toUtf8(), QHostAddress::Broadcast, 8901);
+        if (m_localAddress.isEmpty()) {
+            m_localAddress = getLocalAddress();
+            if (!m_localAddress.isEmpty()) {
+                qDebug(("Local Address: "+m_localAddress).toUtf8());
+            }
+        }
+        if (!m_localAddress.isEmpty()) {
+            m_udpsocket->writeDatagram(("ysgserver:"+m_localAddress).toUtf8(), QHostAddress::Broadcast, 8901);
+        }
     });
     timer->start();
 }
@@ -94,6 +92,22 @@ void Backend::openChrome(const QString &chromePath)
 void Backend::shutdown()
 {
     QProcess::startDetached("shutdown -s -f -t 00");
+}
+
+QString Backend::getLocalAddress()
+{
+    QString localAddress;
+    for (const QHostAddress& address : QNetworkInterface::allAddresses()) {
+        localAddress = address.toString();
+        if (localAddress.startsWith("192.168.1.")) {
+            break;
+        }
+    }
+    if (localAddress.startsWith("192.168.1.")) {
+        return localAddress;
+    } else {
+        return QString();
+    }
 }
 
 void Backend::onCommandReceived(const QString &command)

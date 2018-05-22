@@ -45,6 +45,10 @@ public slots:
     void shutdown();
 
 private:
+    QString m_localAddress;
+    QString getLocalAddress();
+
+private:
     QTcpServer *m_server;
     QTcpSocket *m_socket;
     QProcess m_process;
