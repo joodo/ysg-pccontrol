@@ -11,8 +11,9 @@ Backend::Backend(QObject *parent) : QObject(parent)
 {
     m_server = new QTcpServer();
     m_server->listen(QHostAddress::Any, 8899);
-    connect(m_server, &QTcpServer::newConnection, this, &Backend::onNewConnection);
+    connect(m_server, &QTcpServer::newConnection, this, &Backend::newConnection);
     connect(this, &Backend::commandReceived, &Backend::onCommandReceived);
+    connect(this, &Backend::newConnection, &Backend::onNewConnection);
 
     QTimer::singleShot(3000, []() {SetCursorPos(10000, 10000);});
 
@@ -20,18 +21,14 @@ Backend::Backend(QObject *parent) : QObject(parent)
     connect(this, &Backend::log, &Backend::writeLogToFile);
 
     // UDP 广播 ip 地址
-    m_udpsocket = new QUdpSocket();
     QTimer *timer = new QTimer();
-    timer->setInterval(500);
+    timer->setInterval(1000);
     connect(timer, &QTimer::timeout, [=](){
-        if (m_localAddress.isEmpty()) {
-            m_localAddress = getLocalAddress();
-            if (!m_localAddress.isEmpty()) {
-                qDebug(("Local Address: "+m_localAddress).toUtf8());
-            }
-        }
-        if (!m_localAddress.isEmpty()) {
-            m_udpsocket->writeDatagram(("ysgserver:"+m_localAddress).toUtf8(), QHostAddress::Broadcast, 8901);
+        auto address = getLocalAddress();
+        if (!address.isEmpty()) {
+            int lastNumber = address.split('.').last().toInt();
+            emit addressGot(lastNumber);
+            timer->deleteLater();
         }
     });
     timer->start();
@@ -85,8 +82,11 @@ void Backend::lightAction(const QString &command)
 
 void Backend::openChrome(const QString &chromePath)
 {
+    if (m_chromeOpened) return;
+
     auto path = QUrl(chromePath).toLocalFile();
     m_process.start(path + " --disable-infobars --kiosk localhost");
+    m_chromeOpened = true;
 }
 
 void Backend::shutdown()

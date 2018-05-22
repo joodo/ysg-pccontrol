@@ -42,7 +42,6 @@ QtObject {
     }
     function load() {
         loadFromFile("save")
-        Backend.openChrome(chromeUrl)
     }
     function reset() {
         loadFromFile("null")

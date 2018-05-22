@@ -72,6 +72,22 @@ Window {
         interval: 150; repeat: true; triggeredOnStart: true
     }
 
+    Text {
+        id: textAddress
+        anchors.centerIn: parent
+        color: "red"
+        font.pointSize: 128
+        font.bold: true
+
+        Text {
+            anchors { centerIn: parent; verticalCenterOffset: -128 }
+            color: "red"
+            font.pointSize: 64
+            font.bold: true
+            text: "连接码"
+        }
+    }
+
     MouseArea {
         id: mouseArea
         anchors.fill: parent
@@ -125,6 +141,12 @@ Window {
             default: ;
             }
             socketVideoPlay.send(command)
+        }
+        onAddressGot: {
+            textAddress.text = lastNumber
+        }
+        onNewConnection: {
+            Backend.openChrome(Session.chromeUrl)
         }
     }
 

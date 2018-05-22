@@ -11,7 +11,6 @@
 #include <QDateTime>
 #include <QHostAddress>
 #include <QNetworkInterface>
-#include <QUdpSocket>
 
 #include <Windows.h>
 #pragma comment(lib, "User32.lib")
@@ -41,21 +40,27 @@ public slots:
     void saveToFile(const QString& data, const QString& path);
     QString loadFromFile(const QString& path);
     void lightAction(const QString& command);
-    void openChrome(const QString& chromePath);
     void shutdown();
 
+public slots:
+    void openChrome(const QString& chromePath);
 private:
-    QString m_localAddress;
+    bool m_chromeOpened = false;
+
+signals:
+    void addressGot(int lastNumber);
+private:
     QString getLocalAddress();
 
 private:
     QTcpServer *m_server;
     QTcpSocket *m_socket;
     QProcess m_process;
-    QUdpSocket *m_udpsocket;
 
     SocketSandBox m_socketSandBox;
 
+signals:
+    void newConnection();
 private slots:
     void onCommandReceived(const QString& command);
     void onNewConnection();
