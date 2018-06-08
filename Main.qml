@@ -7,8 +7,8 @@ import PcControl 1.0
 
 Window {
     visible: true
-    width: 640
-    height: 480
+    width: 800
+    height: 600
     title: qsTr("电子沙盘")
     color: "green"
 
@@ -88,20 +88,35 @@ Window {
         }
     }
 
-    MouseArea {
-        id: mouseArea
-        anchors.fill: parent
-        onClicked: {
-            if (Backend.loadFromFile("dandandan") === "pass") {
-                viewSettings.visible = true
+    Column {
+        anchors { bottom: parent.bottom }
+        spacing: 4
+        Button {
+            text: "设置"
+            onClicked: {
+                if (Backend.loadFromFile("dandandan") === "pass") {
+                    viewSettings.visible = true
+                }
             }
         }
-        focus: true
-        Keys.onPressed: {
-            if (event.key === Qt.Key_Space) {
-            } else {
-                Backend.commandReceived(event.text)
+        Button {
+            text: "打开 Chrome"
+            onClicked: {
+                visible = false
+                Backend.openChrome(Session.chromeUrl)
             }
+        }
+        Button {
+            text: "宣传视频中文"
+            onClicked: Backend.commandReceived("a")
+        }
+        Button {
+            text: "宣传视频英文"
+            onClicked: Backend.commandReceived("b")
+        }
+        Button {
+            text: "幻灯片"
+            onClicked: Backend.commandReceived("c")
         }
     }
 
@@ -109,7 +124,6 @@ Window {
         id: viewSettings
         anchors.fill: parent
         visible: false
-        onVisibleChanged: if (!visible) mouseArea.focus = true
     }
 
     Connections {
@@ -127,6 +141,7 @@ Window {
                 break
             case "c":
                 Backend.lightAction("1b43dd0d0a970080") //stop
+                timerSandBoxAction.end()
                 break
             case "play":
                 timerSandBoxAction.play()
