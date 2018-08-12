@@ -1,0 +1,102 @@
+<!--
+chrome://flags/
+autoplay
+no user gesture
+-->
+<html> 
+<head>
+	<meta charset="utf-8">
+	<style>
+		html {
+			overflow-x:hidden;
+			overflow-y:hidden;
+		}
+		* {
+			margin:0;
+			padding:0;
+			cursor: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAAZdEVYdFNvZnR3YXJlAFBhaW50Lk5FVCB2My41LjbQg61aAAAADUlEQVQYV2P4//8/IwAI/QL/+TZZdwAAAABJRU5ErkJggg=='),
+    url(images/blank.cur),
+    none;
+		}
+		body {
+			background: #000;
+		}
+		div.container{
+			width: 100%;
+			height: 100%;
+			display: table;
+		}
+		div.wrapper{
+			text-align: center;
+			display: table-cell;
+			vertical-align: middle;
+		}
+		
+	</style>
+</head>
+<body>
+	<div class="container">
+			<div class="wrapper">
+				<video id="video" ></video>
+			</div>
+	</div>
+<script> 
+let videoElement = document.querySelector('#video')
+let socket = new WebSocket('ws://localhost:8900/')
+socket.onmessage = function(event) {
+	let message = event.data
+	switch (message) {
+	case 'a':
+	case 'b':
+		videoElement.src = message+'.mp4'
+		videoElement.volume = 0.5
+		videoElement.muted = false
+		videoElement.loop = false
+		videoElement.play()
+		break
+	case 'c':
+		videoElement.src = message+'.mp4'
+		videoElement.volume = 0.5
+		videoElement.muted = false
+		videoElement.loop = true
+		videoElement.play()
+		break
+	case 'volumeup':
+		if (videoElement.volume < 1.0) videoElement.volume += 0.1
+        break
+	case 'volumedown':
+		if (videoElement.volume > 0.0) videoElement.volume -= 0.1
+        break
+	case 'mute':
+		videoElement.muted = !videoElement.muted
+		break
+	case "play":
+		videoElement.play()
+		break
+	case "stop":
+		videoElement.src = ''
+		break
+	case "pause":
+		videoElement.pause()
+		break;
+	default: ;
+	}
+}
+
+function resizeVideoElement() {
+    var videoRatio = videoElement.videoWidth / videoElement.videoHeight
+	var wWidth = screen.width
+	var wHeight = screen.height
+    var windowRatio = wWidth / wHeight
+    if (windowRatio > videoRatio) {
+        videoElement.style.height = wHeight+"px"
+        videoElement.style.width = parseInt(wHeight*videoRatio)+"px"
+    } else {
+        videoElement.style.width = wWidth+"px"
+        videoElement.style.height = parseInt(wWidth/videoRatio)+"px"
+    }
+}
+videoElement.onplaying = resizeVideoElement
+</script> 
+</body> 
+</html>
