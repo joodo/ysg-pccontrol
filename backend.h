@@ -52,6 +52,8 @@ signals:
 private:
     QString getLocalAddress();
 
+public slots:
+    void sendTcpMessage(const QString& message);
 private:
     QTcpServer *m_server;
     QTcpSocket *m_socket;

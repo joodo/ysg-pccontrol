@@ -21,28 +21,39 @@ no user gesture
 		body {
 			background: #000;
 		}
-		div.container{
-			width: 100%;
-			height: 100%;
-			display: table;
+		video {
+		    position: fixed;
 		}
-		div.wrapper{
-			text-align: center;
-			display: table-cell;
-			vertical-align: middle;
+		canvas {
+		    position: fixed;
+			top: 0;
+			left: 0;
 		}
-		
 	</style>
 </head>
 <body>
-	<div class="container">
-			<div class="wrapper">
-				<video id="video" ></video>
-			</div>
-	</div>
-<script> 
-let videoElement = document.querySelector('#video')
-let socket = new WebSocket('ws://localhost:8900/')
+	<video id="video" ></video>
+	<canvas id="canvas"></canvas>
+<script>
+const canvasElement = document.querySelector('#canvas')
+const ctx = canvasElement.getContext('2d')
+const videoElement = document.querySelector('#video')
+const socket = new WebSocket('ws://localhost:8900/')
+
+let leftOffset = 0
+let topOffset = 0
+
+function createSnapshotAndSend() {
+    console.log('create!!')
+    canvasElement.style.left = videoElement.style.left
+    canvasElement.style.top = videoElement.style.top
+    canvasElement.width = parseInt(videoElement.style.width)
+    canvasElement.height = parseInt(videoElement.style.height)
+    ctx.drawImage(videoElement, 0, 0, canvasElement.width, canvasElement.height)
+	const dataUrl = canvasElement.toDataURL("image/jpeg")
+	socket.send(dataUrl)
+}
+
 socket.onmessage = function(event) {
 	let message = event.data
 	switch (message) {
@@ -53,6 +64,7 @@ socket.onmessage = function(event) {
 		videoElement.muted = false
 		videoElement.loop = false
 		videoElement.play()
+	    canvasElement.style.display = "none"
 		break
 	case 'c':
 		videoElement.src = message+'.mp4'
@@ -60,6 +72,7 @@ socket.onmessage = function(event) {
 		videoElement.muted = false
 		videoElement.loop = true
 		videoElement.play()
+	    canvasElement.style.display = "none"
 		break
 	case 'volumeup':
 		if (videoElement.volume < 1.0) videoElement.volume += 0.1
@@ -72,29 +85,54 @@ socket.onmessage = function(event) {
 		break
 	case "play":
 		videoElement.play()
+	    canvasElement.style.display = "none"
 		break
 	case "stop":
 		videoElement.src = ''
+	    canvasElement.style.display = "none"
 		break
 	case "pause":
+	    console.log('pouse!')
 		videoElement.pause()
+		createSnapshotAndSend()
+	    canvasElement.style.display = "block"
 		break;
 	default: ;
+	}
+	let msgs = message.split(' ')
+	if (msgs[0] === 'snapshotmove') {
+	    const w = canvasElement.width
+		const h = canvasElement.height
+		const x = parseFloat(msgs[1])
+		const y = parseFloat(msgs[2])
+		const scale = parseFloat(msgs[3])
+	    ctx.fillRect(0,0, w, h);
+	    ctx.drawImage(videoElement, x, y, w*scale, h*scale)
 	}
 }
 
 function resizeVideoElement() {
-    var videoRatio = videoElement.videoWidth / videoElement.videoHeight
-	var wWidth = screen.width
-	var wHeight = screen.height
-    var windowRatio = wWidth / wHeight
+    const videoRatio = videoElement.videoWidth / videoElement.videoHeight
+	const wWidth = screen.width
+	const wHeight = screen.height
+    const windowRatio = wWidth / wHeight
     if (windowRatio > videoRatio) {
         videoElement.style.height = wHeight+"px"
-        videoElement.style.width = parseInt(wHeight*videoRatio)+"px"
+		topOffset = 0
+		
+		const eWidth = parseInt(wHeight*videoRatio)
+        videoElement.style.width = eWidth+"px"
+		leftOffset = parseInt((wWidth-eWidth)/2)
     } else {
         videoElement.style.width = wWidth+"px"
-        videoElement.style.height = parseInt(wWidth/videoRatio)+"px"
+		leftOffset = 0
+		
+		const eHeight = parseInt(wWidth/videoRatio)
+        videoElement.style.height = eHeight+"px"
+		topOffset = parseInt((wHeight-eHeight)/2)
     }
+	videoElement.style.left = leftOffset+"px"
+	videoElement.style.top = topOffset+"px"
 }
 videoElement.onplaying = resizeVideoElement
 </script> 

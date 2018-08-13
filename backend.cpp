@@ -4,6 +4,8 @@ Backend* Backend::m_instance = nullptr;
 
 void myMessageOutput(QtMsgType type, const QMessageLogContext &context, const QString &msg)
 {
+    Q_UNUSED(context)
+    Q_UNUSED(type)
     Backend::instance()->log(QDateTime::currentDateTime().toString(Qt::ISODate) + ": " + msg);
 }
 
@@ -108,6 +110,11 @@ QString Backend::getLocalAddress()
     } else {
         return QString();
     }
+}
+
+void Backend::sendTcpMessage(const QString &message)
+{
+    m_socket->write(message.toUtf8());
 }
 
 void Backend::onCommandReceived(const QString &command)

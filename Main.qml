@@ -94,9 +94,10 @@ Window {
         Button {
             text: "设置"
             onClicked: {
-                if (Backend.loadFromFile("dandandan") === "pass") {
+                viewSettings.visible = true
+                /*if (Backend.loadFromFile("dandandan") === "pass") {
                     viewSettings.visible = true
-                }
+                }*/
             }
         }
         Button {
@@ -174,6 +175,13 @@ Window {
         }
 
         listen: true; port: 8900
-        onClientConnected: { socket = webSocket; send('hello') }
+        onClientConnected: {
+            socket = webSocket
+            socket.textMessageReceived.connect(function(message) {
+                print("Snapshot received")
+                Backend.sendTcpMessage(message)
+            })
+            send('hello')
+        }
     }
 }
