@@ -87,7 +87,8 @@ void Backend::openChrome(const QString &chromePath)
     if (m_chromeOpened) return;
 
     auto path = QUrl(chromePath).toLocalFile();
-    m_process.start(path + " --disable-infobars --kiosk localhost");
+    path = '\"' + path + '\"';
+    m_process.start(path + " localhost");
     m_chromeOpened = true;
 }
 
