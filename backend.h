@@ -11,6 +11,7 @@
 #include <QDateTime>
 #include <QHostAddress>
 #include <QNetworkInterface>
+#include <QCoreApplication>
 
 #include <Windows.h>
 #pragma comment(lib, "User32.lib")
@@ -37,8 +38,8 @@ private:
     QFile *m_logFile = nullptr;
 
 public slots:
-    void saveToFile(const QString& data, const QString& path);
-    QString loadFromFile(const QString& path);
+    void saveToFile(const QString& data, const QString& filename);
+    QString loadFromFile(const QString& filename);
     void lightAction(const QString& command);
     void shutdown();
 

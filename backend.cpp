@@ -58,23 +58,24 @@ void Backend::writeLogToFile(const QString &message)
     m_logFile->close();
 }
 
-void Backend::saveToFile(const QString &data, const QString &path)
+void Backend::saveToFile(const QString &data, const QString &filename)
 {
-    QFile file(path);
+    QFile file(qApp->applicationDirPath() + '/' + filename);
     file.open(QIODevice::WriteOnly | QIODevice::Text);
     file.write(data.toUtf8());
     file.close();
 }
 
-QString Backend::loadFromFile(const QString &path)
+QString Backend::loadFromFile(const QString &filename)
 {
-    QFile file(path);
+    QFile file(qApp->applicationDirPath() + '/' + filename);
     if (file.open(QIODevice::ReadOnly | QIODevice::Text)) {
-        return file.readAll();
+        QString re = file.readAll();
+        file.close();
+        return re;
     } else {
         return "";
     }
-    file.close();
 }
 
 void Backend::lightAction(const QString &command)

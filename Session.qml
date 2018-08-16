@@ -46,12 +46,12 @@ QtObject {
     function reset() {
         loadFromFile("null")
     }
-    function loadFromFile(path) {
-        var file = Backend.loadFromFile(path)
+    function loadFromFile(filename) {
+        var file = Backend.loadFromFile(filename)
         try {
             var data = JSON.parse(file)
         } catch (e) {
-            if (path !== "defaultSave") loadFromFile("defaultSave")
+            if (filename !== "defaultSave") loadFromFile("defaultSave")
             return
         }
 
